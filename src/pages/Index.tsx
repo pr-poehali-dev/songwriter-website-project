@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Icon from '@/components/ui/icon';
 
+const CONTACT_URL = 'https://functions.poehali.dev/6afbe884-da81-4f1e-9505-95f538adf5e4';
+
 const ARTIST_PHOTO = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/files/19cc22de-fa35-4290-8e8b-36186d56debe.jpg';
 const ALBUM_COVER = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/files/1ea72641-7579-4adc-87f3-7b67c32c0668.jpg';
 
@@ -42,6 +44,33 @@ export default function Index() {
   const [expandedAlbum, setExpandedAlbum] = useState<number | null>(null);
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const [formName, setFormName] = useState('');
+  const [formEmail, setFormEmail] = useState('');
+  const [formMessage, setFormMessage] = useState('');
+  const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormStatus('sending');
+    try {
+      const res = await fetch(CONTACT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: formName, email: formEmail, message: formMessage }),
+      });
+      if (res.ok) {
+        setFormStatus('success');
+        setFormName('');
+        setFormEmail('');
+        setFormMessage('');
+      } else {
+        setFormStatus('error');
+      }
+    } catch {
+      setFormStatus('error');
+    }
+  };
 
   const navigate = (section: Section) => {
     setActiveSection(section);
@@ -305,7 +334,7 @@ export default function Index() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-16 animate-fade-in-delay-1">
-            <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-8" onSubmit={handleSubmit}>
               <div>
                 <label className="text-xs tracking-[0.2em] uppercase text-[#666] block mb-2">
                   Ваше имя
@@ -313,6 +342,9 @@ export default function Index() {
                 <input
                   type="text"
                   placeholder="Как вас зовут?"
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  required
                   className="w-full bg-transparent border-b border-[#2a2a2a] focus:border-gold outline-none py-3 text-sm text-[#e8e0d0] transition-colors placeholder:text-[#333]"
                 />
               </div>
@@ -323,6 +355,9 @@ export default function Index() {
                 <input
                   type="email"
                   placeholder="your@email.com"
+                  value={formEmail}
+                  onChange={(e) => setFormEmail(e.target.value)}
+                  required
                   className="w-full bg-transparent border-b border-[#2a2a2a] focus:border-gold outline-none py-3 text-sm text-[#e8e0d0] transition-colors placeholder:text-[#333]"
                 />
               </div>
@@ -333,14 +368,37 @@ export default function Index() {
                 <textarea
                   rows={5}
                   placeholder="Расскажите о себе или вашем предложении..."
+                  value={formMessage}
+                  onChange={(e) => setFormMessage(e.target.value)}
+                  required
                   className="w-full bg-transparent border-b border-[#2a2a2a] focus:border-gold outline-none py-3 text-sm text-[#e8e0d0] transition-colors resize-none placeholder:text-[#333]"
                 />
               </div>
+
+              {formStatus === 'success' && (
+                <div className="flex items-center gap-3 text-gold text-sm animate-fade-in">
+                  <Icon name="CheckCircle" size={16} />
+                  Сообщение отправлено! Отвечу в ближайшее время.
+                </div>
+              )}
+              {formStatus === 'error' && (
+                <div className="flex items-center gap-3 text-red-400 text-sm animate-fade-in">
+                  <Icon name="AlertCircle" size={16} />
+                  Ошибка отправки. Попробуйте позже или напишите напрямую.
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="px-8 py-3 bg-gold text-[#0d0d0d] text-xs tracking-[0.2em] uppercase font-semibold hover:opacity-85 transition-opacity"
+                disabled={formStatus === 'sending'}
+                className="px-8 py-3 bg-gold text-[#0d0d0d] text-xs tracking-[0.2em] uppercase font-semibold hover:opacity-85 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                Отправить
+                {formStatus === 'sending' ? (
+                  <>
+                    <Icon name="Loader" size={14} className="animate-spin" />
+                    Отправка...
+                  </>
+                ) : 'Отправить'}
               </button>
             </form>
 
