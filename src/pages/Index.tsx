@@ -35,7 +35,17 @@ export default function Index() {
   const [expandedAlbum, setExpandedAlbum] = useState<number | null>(null);
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const formatTime = (sec: number) => {
+    if (!sec || isNaN(sec)) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   const handleTrackClick = (key: string, url?: string) => {
     if (playingTrack === key) {
@@ -45,13 +55,30 @@ export default function Index() {
       if (audioRef.current) {
         audioRef.current.pause();
       }
+      setProgress(0);
+      setCurrentTime(0);
+      setDuration(0);
       if (url) {
-        audioRef.current = new Audio(url);
-        audioRef.current.play();
-        audioRef.current.onended = () => setPlayingTrack(null);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        audio.play();
+        audio.onended = () => { setPlayingTrack(null); setProgress(0); setCurrentTime(0); };
+        audio.ontimeupdate = () => {
+          setCurrentTime(audio.currentTime);
+          if (audio.duration) setProgress(audio.currentTime / audio.duration);
+        };
+        audio.onloadedmetadata = () => setDuration(audio.duration);
       }
       setPlayingTrack(key);
     }
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>, key: string) => {
+    e.stopPropagation();
+    if (!audioRef.current || playingTrack !== key) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audioRef.current.currentTime = ratio * audioRef.current.duration;
   };
 
   useEffect(() => {
@@ -267,29 +294,42 @@ export default function Index() {
                         return (
                           <div
                             key={key}
-                            className="track-hover flex items-center gap-4 py-3 border-b border-[#141414] last:border-0 cursor-pointer group"
+                            className="track-hover flex flex-col border-b border-[#141414] last:border-0 cursor-pointer group"
                             onClick={() => handleTrackClick(key, track.url)}
                           >
-                            <div className="w-6 shrink-0 text-center">
-                              {isPlaying ? (
-                                <Icon name="Pause" size={14} className="text-gold" />
-                              ) : (
-                                <>
-                                  <span className="text-[#444] text-xs group-hover:hidden">
-                                    {track.num}
-                                  </span>
-                                  <span className="hidden group-hover:flex justify-center">
-                                    <Icon name="Play" size={13} className="text-gold" />
-                                  </span>
-                                </>
-                              )}
+                            <div className="flex items-center gap-4 py-3">
+                              <div className="w-6 shrink-0 text-center">
+                                {isPlaying ? (
+                                  <Icon name="Pause" size={14} className="text-gold" />
+                                ) : (
+                                  <>
+                                    <span className="text-[#444] text-xs group-hover:hidden">
+                                      {track.num}
+                                    </span>
+                                    <span className="hidden group-hover:flex justify-center">
+                                      <Icon name="Play" size={13} className="text-gold" />
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                              <div className={`flex-1 text-sm ${isPlaying ? 'text-gold' : 'text-[#bbb]'}`}>
+                                {track.title}
+                              </div>
+                              <div className="text-[#444] text-xs tabular-nums">
+                                {isPlaying ? `${formatTime(currentTime)} / ${formatTime(duration)}` : track.duration}
+                              </div>
                             </div>
-                            <div
-                              className={`flex-1 text-sm ${isPlaying ? 'text-gold' : 'text-[#bbb]'}`}
-                            >
-                              {track.title}
-                            </div>
-                            <div className="text-[#444] text-xs tabular-nums">{track.duration}</div>
+                            {isPlaying && (
+                              <div
+                                className="mb-3 mx-0 h-[3px] bg-[#1e1e1e] rounded-full cursor-pointer relative"
+                                onClick={(e) => handleSeek(e, key)}
+                              >
+                                <div
+                                  className="h-full bg-gold rounded-full transition-all duration-100"
+                                  style={{ width: `${progress * 100}%` }}
+                                />
+                              </div>
+                            )}
                           </div>
                         );
                       })}
