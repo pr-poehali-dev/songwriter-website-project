@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Icon from '@/components/ui/icon';
 
 const CONTACT_URL = 'https://functions.poehali.dev/6afbe884-da81-4f1e-9505-95f538adf5e4';
@@ -13,17 +13,17 @@ const ALBUMS = [
     year: '2026',
     cover: ALBUM_COVER,
     tracks: [
-      { num: 1, title: 'Падший ангел', duration: '—' },
-      { num: 2, title: 'Сердце демона', duration: '—' },
-      { num: 3, title: "Demon's heart", duration: '—' },
-      { num: 4, title: 'Ласточка', duration: '—' },
-      { num: 5, title: 'Странник', duration: '—' },
-      { num: 6, title: 'Двое', duration: '—' },
-      { num: 7, title: 'Вместе вопреки', duration: '—' },
-      { num: 8, title: 'Колдун', duration: '—' },
-      { num: 9, title: 'Её запреты (исп. Gisher)', duration: '—' },
-      { num: 10, title: 'Запретная любовь', duration: '—' },
-      { num: 11, title: 'Время', duration: '—' },
+      { num: 1, title: 'Падший ангел', duration: '—', url: 'https://pixeldrain.com/api/file/6dgi21VE' as string | undefined },
+      { num: 2, title: 'Сердце демона', duration: '—', url: undefined as string | undefined },
+      { num: 3, title: "Demon's heart", duration: '—', url: undefined as string | undefined },
+      { num: 4, title: 'Ласточка', duration: '—', url: undefined as string | undefined },
+      { num: 5, title: 'Странник', duration: '—', url: undefined as string | undefined },
+      { num: 6, title: 'Двое', duration: '—', url: undefined as string | undefined },
+      { num: 7, title: 'Вместе вопреки', duration: '—', url: undefined as string | undefined },
+      { num: 8, title: 'Колдун', duration: '—', url: undefined as string | undefined },
+      { num: 9, title: 'Её запреты (исп. Gisher)', duration: '—', url: undefined as string | undefined },
+      { num: 10, title: 'Запретная любовь', duration: '—', url: undefined as string | undefined },
+      { num: 11, title: 'Время', duration: '—', url: undefined as string | undefined },
     ],
   },
 ];
@@ -35,6 +35,28 @@ export default function Index() {
   const [expandedAlbum, setExpandedAlbum] = useState<number | null>(null);
   const [playingTrack, setPlayingTrack] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleTrackClick = (key: string, url?: string) => {
+    if (playingTrack === key) {
+      audioRef.current?.pause();
+      setPlayingTrack(null);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+      if (url) {
+        audioRef.current = new Audio(url);
+        audioRef.current.play();
+        audioRef.current.onended = () => setPlayingTrack(null);
+      }
+      setPlayingTrack(key);
+    }
+  };
+
+  useEffect(() => {
+    return () => { audioRef.current?.pause(); };
+  }, []);
 
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
@@ -246,7 +268,7 @@ export default function Index() {
                           <div
                             key={key}
                             className="track-hover flex items-center gap-4 py-3 border-b border-[#141414] last:border-0 cursor-pointer group"
-                            onClick={() => setPlayingTrack(isPlaying ? null : key)}
+                            onClick={() => handleTrackClick(key, track.url)}
                           >
                             <div className="w-6 shrink-0 text-center">
                               {isPlaying ? (
