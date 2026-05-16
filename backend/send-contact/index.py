@@ -59,7 +59,7 @@ def handler(event: dict, context) -> dict:
         </tr>
       </table>
       <p style="color: #444; font-size: 12px; margin-top: 40px; border-top: 1px solid #1e1e1e; padding-top: 16px;">
-        Отправлено с официального сайта Александра Соколова
+        Отправлено с официального сайта Дарьи Федяшевой
       </p>
     </div>
     """

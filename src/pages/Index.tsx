@@ -97,7 +97,7 @@ export default function Index() {
           onClick={() => navigate('home')}
           className="font-display text-xl tracking-widest text-gold hover:opacity-70 transition-opacity"
         >
-          А. СОКОЛОВ
+          Д. ФЕДЯШЕВА
         </button>
 
         {/* Desktop nav */}
@@ -162,9 +162,9 @@ export default function Index() {
                 Автор и исполнитель
               </p>
               <h1 className="font-display text-6xl md:text-8xl font-light italic leading-none mb-6 text-[#f0e8d8]">
-                Александр
+                Дарья
                 <br />
-                Соколов
+                Федяшева
               </h1>
               <p className="text-[#aaa] text-sm md:text-base leading-relaxed max-w-md font-light">
                 Музыка о том, что остаётся за словами. О тишине между нотами и историях, которые мы
@@ -194,6 +194,7 @@ export default function Index() {
                 <p className="font-display text-2xl italic text-[#d4c89a] leading-relaxed">
                   «Каждая песня — это письмо, которое я пишу себе из прошлого»
                 </p>
+
               </div>
               <div className="flex gap-10 md:gap-16 text-center">
                 {[
@@ -452,7 +453,7 @@ export default function Index() {
 
       {/* Footer */}
       <footer className="border-t border-[#1a1a1a] px-6 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <span className="font-display italic text-[#444] text-sm">Александр Соколов</span>
+        <span className="font-display italic text-[#444] text-sm">Дарья Федяшева</span>
         <span className="text-[#333] text-xs tracking-widest">© 2024</span>
         <div className="flex gap-6">
           {(['home', 'albums', 'contacts'] as Section[]).map((s) => (
