@@ -159,7 +159,7 @@ export default function Index() {
 
             <div className="relative z-10 px-6 md:px-16 pb-20 md:pb-28 max-w-3xl animate-fade-in-delay-1">
               <p className="text-xs tracking-[0.3em] uppercase text-gold mb-4 opacity-80">
-                Автор и исполнитель
+                Автор текстов
               </p>
               <h1 className="font-display text-6xl md:text-8xl font-light italic leading-none mb-6 text-[#f0e8d8]">
                 Дарья
