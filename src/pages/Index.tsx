@@ -186,29 +186,7 @@ export default function Index() {
             </div>
           </div>
 
-          {/* Stats strip */}
-          <div className="bg-[#111] border-t border-[#1e1e1e] px-6 md:px-16 py-12 animate-fade-in-delay-2">
-            <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 md:gap-24 items-start">
-              <div className="flex-1">
-                <p className="font-display text-2xl italic text-[#d4c89a] leading-relaxed">
-                  «Каждая песня — это письмо, которое я пишу себе из прошлого»
-                </p>
 
-              </div>
-              <div className="flex gap-10 md:gap-16 text-center">
-                {[
-                  ['12', 'лет на сцене'],
-                  ['3', 'альбома'],
-                  ['200+', 'концертов'],
-                ].map(([n, l]) => (
-                  <div key={n}>
-                    <div className="font-display text-4xl text-gold font-light">{n}</div>
-                    <div className="text-[#666] text-xs mt-1 tracking-wide">{l}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </main>
       )}
 
