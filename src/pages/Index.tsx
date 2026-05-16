@@ -360,7 +360,7 @@ export default function Index() {
               Контакты
             </h2>
             <p className="text-[#666] text-sm mb-16 max-w-lg">
-              По вопросам концертов, коллаборации или просто чтобы поделиться тем, что тронуло.
+              По вопросам сотрудничества или просто чтобы поделиться тем, что тронуло.
             </p>
           </div>
 
@@ -434,47 +434,11 @@ export default function Index() {
             </form>
 
             <div className="space-y-10">
-              <div>
-                <p className="text-xs tracking-[0.2em] uppercase text-[#666] mb-5">Соцсети</p>
-                <div className="space-y-4">
-                  {[
-                    { icon: 'Send', label: 'Telegram', handle: '@sokolov_music' },
-                    { icon: 'Music', label: 'ВКонтакте', handle: 'vk.com/sokolov' },
-                    { icon: 'Headphones', label: 'Яндекс Музыка', handle: 'Александр Соколов' },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="flex items-center gap-4 group cursor-pointer"
-                    >
-                      <div className="w-10 h-10 border border-[#222] flex items-center justify-center group-hover:border-gold transition-colors">
-                        <Icon
-                          name={item.icon as 'Send' | 'Music' | 'Headphones'}
-                          size={16}
-                          className="text-[#666] group-hover:text-gold transition-colors"
-                        />
-                      </div>
-                      <div>
-                        <div className="text-sm text-[#bbb] group-hover:text-gold transition-colors">
-                          {item.label}
-                        </div>
-                        <div className="text-xs text-[#555]">{item.handle}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               <div className="border-t border-[#1e1e1e] pt-10">
                 <p className="text-xs tracking-[0.2em] uppercase text-[#666] mb-4">
-                  По вопросам концертов
+                  По вопросам сотрудничества
                 </p>
-                <p className="text-[#aaa] text-sm">booking@sokolov-music.ru</p>
-              </div>
-
-              <div className="border-l-2 border-gold pl-5">
-                <p className="font-display text-lg italic text-[#8a7d60]">
-                  «Музыка начинается там, где заканчиваются слова»
-                </p>
+                <p className="text-[#aaa] text-sm">sethrift@yandex.ru</p>
               </div>
             </div>
           </div>
