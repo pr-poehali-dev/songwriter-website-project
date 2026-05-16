@@ -3,7 +3,7 @@ import Icon from '@/components/ui/icon';
 
 const CONTACT_URL = 'https://functions.poehali.dev/6afbe884-da81-4f1e-9505-95f538adf5e4';
 
-const ARTIST_PHOTO = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/files/19cc22de-fa35-4290-8e8b-36186d56debe.jpg';
+const ARTIST_PHOTO = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/bucket/40b61dca-c35a-47ac-8ed9-f33750a848c3.jpg';
 const ALBUM_COVER = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/files/1ea72641-7579-4adc-87f3-7b67c32c0668.jpg';
 
 const ALBUMS = [
