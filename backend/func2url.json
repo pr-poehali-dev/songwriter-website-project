@@ -1,4 +1,5 @@
 {
+  "audio-proxy": "https://functions.poehali.dev/11a0f7e9-955d-449a-a519-8be2af5a36d5",
   "upload-track": "https://functions.poehali.dev/8dc59a66-845c-4326-8dc3-8cc45ec28a06",
   "send-contact": "https://functions.poehali.dev/6afbe884-da81-4f1e-9505-95f538adf5e4"
 }
