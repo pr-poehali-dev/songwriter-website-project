@@ -15,39 +15,51 @@ def handler(event: dict, context) -> dict:
     if event.get('httpMethod') == 'OPTIONS':
         return {'statusCode': 200, 'headers': cors_headers, 'body': ''}
 
-    body = json.loads(event.get('body') or '{}')
-    filename = body.get('filename')
-    file_data = body.get('data')
+    try:
+        raw_body = event.get('body') or '{}'
+        if event.get('isBase64Encoded'):
+            raw_body = base64.b64decode(raw_body).decode('utf-8')
+        body = json.loads(raw_body)
+        filename = body.get('filename')
+        file_data = body.get('data')
 
-    if not filename or not file_data:
+        if not filename or not file_data:
+            return {
+                'statusCode': 400,
+                'headers': cors_headers,
+                'body': json.dumps({'error': 'filename and data are required'}),
+            }
+
+        audio_bytes = base64.b64decode(file_data)
+
+        s3 = boto3.client(
+            's3',
+            endpoint_url='https://bucket.poehali.dev',
+            aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
+        )
+
+        key = f'tracks/{filename}'
+        s3.put_object(
+            Bucket='files',
+            Key=key,
+            Body=audio_bytes,
+            ContentType='audio/mpeg',
+            ACL='public-read',
+        )
+
+        cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
+
         return {
-            'statusCode': 400,
+            'statusCode': 200,
             'headers': cors_headers,
-            'body': json.dumps({'error': 'filename and data are required'}),
+            'body': json.dumps({'url': cdn_url, 'filename': filename}),
         }
 
-    audio_bytes = base64.b64decode(file_data)
-
-    s3 = boto3.client(
-        's3',
-        endpoint_url='https://bucket.poehali.dev',
-        aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=os.environ['AWS_SECRET_ACCESS_KEY'],
-    )
-
-    key = f'tracks/{filename}'
-    s3.put_object(
-        Bucket='files',
-        Key=key,
-        Body=audio_bytes,
-        ContentType='audio/mpeg',
-        ACL='public-read',
-    )
-
-    cdn_url = f"https://cdn.poehali.dev/projects/{os.environ['AWS_ACCESS_KEY_ID']}/bucket/{key}"
-
-    return {
-        'statusCode': 200,
-        'headers': cors_headers,
-        'body': json.dumps({'url': cdn_url, 'filename': filename}),
-    }
+    except Exception as e:
+        print(f"ERROR: {type(e).__name__}: {e}")
+        return {
+            'statusCode': 500,
+            'headers': cors_headers,
+            'body': json.dumps({'error': str(e)}),
+        }
