@@ -24,7 +24,7 @@ const ALBUMS = [
       { num: 6, title: 'Двое', duration: '—', url: 'https://archive.org/download/20260517_20260517_1214/%D0%94%D0%B2%D0%BE%D0%B5.mp3' },
       { num: 7, title: 'Вместе вопреки', duration: '—', url: 'https://archive.org/download/20260517_20260517_1216/%D0%92%D0%BC%D0%B5%D1%81%D1%82%D0%B5%20%D0%B2%D0%BE%D0%BF%D1%80%D0%B5%D0%BA%D0%B8.mp3' },
       { num: 8, title: 'Колдун', duration: '—', url: 'https://archive.org/download/20260517_20260517_1218/%D0%9A%D0%BE%D0%BB%D0%B4%D1%83%D0%BD.mp3' },
-      { num: 9, title: 'Её запреты (исп. Gisher)', duration: '—', url: 'https://archive.org/download/female-vocals/%D0%95%D1%91%20%D0%B7%D0%BE%D0%BF%D1%80%D1%82%D0%B8%20female%20vocals.mp3' },
+      { num: 9, title: 'Её запреты (исп. Gisher)', duration: '—', url: 'https://archive.org/download/female-vocals/%D0%95%D1%91%20%D0%B7%D0%B0%D0%BF%D0%B5%D1%80%D1%82%D1%8B%20female%20vocals.mp3' },
       { num: 10, title: 'Запретная любовь', duration: '—', url: 'https://archive.org/download/20260517_20260517_1224/%D0%97%D0%B0%D0%BF%D1%80%D0%B5%D1%82%D0%BD%D0%B0%D1%8F%20%D0%BB%D1%8E%D0%B1%D0%BE%D0%B2%D1%8C.mp3' },
       { num: 11, title: 'Время', duration: '—', url: 'https://archive.org/download/20260517_20260517_1226/%D0%92%D1%80%D0%B5%D0%BC%D1%8F.mp3' },
     ],
