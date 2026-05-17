@@ -16,7 +16,7 @@ const ALBUMS = [
     year: '2026',
     cover: ALBUM_COVER,
     tracks: [
-      { num: 1, title: 'Падший ангел', duration: '—', url: 'https://archive.org/download/20260517_20260517_1154/%D0%9F%D0%B0%D0%B4%D1%88%D0%B8%D0%B9%20%D0%90%D0%BD%D0%B3%D0%B5%D0%BB.mp3' },
+      { num: 1, title: 'Падший ангел', duration: '—', url: 'https://archive.org/download/20260517_20260517_1154/%D0%9F%D0%B0%D0%B4%D1%88%D0%B8%D0%B9%20%D0%B0%D0%BD%D0%B3%D0%B5%D0%BB.mp3' },
       { num: 2, title: 'Сердце демона', duration: '—', url: undefined as string | undefined },
       { num: 3, title: "Demon's heart", duration: '—', url: undefined as string | undefined },
       { num: 4, title: 'Ласточка', duration: '—', url: undefined as string | undefined },
