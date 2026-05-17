@@ -16,11 +16,11 @@ def handler(event: dict, context) -> dict:
         return {'statusCode': 200, 'headers': cors_headers, 'body': ''}
 
     try:
-        # Имя файла из заголовка
-        headers = {k.lower(): v for k, v in (event.get('headers') or {}).items()}
-        filename = headers.get('x-filename')
+        # Имя файла из query параметра
+        params = event.get('queryStringParameters') or {}
+        filename = params.get('filename')
         if not filename:
-            return {'statusCode': 400, 'headers': cors_headers, 'body': json.dumps({'error': 'X-Filename header required'})}
+            return {'statusCode': 400, 'headers': cors_headers, 'body': json.dumps({'error': 'filename query param required'})}
 
         # Тело — бинарный файл (платформа кодирует в base64)
         body_raw = event.get('body') or ''

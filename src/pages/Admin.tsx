@@ -30,11 +30,11 @@ export default function Admin() {
   const handleFile = (trackName: string, file: File) => {
     setUploads(prev => ({ ...prev, [trackName]: { status: 'uploading' } }));
 
-    const filename = `${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`;
+    const filename = encodeURIComponent(`${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`);
+    const url_with_name = `${UPLOAD_URL}?filename=${filename}`;
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', UPLOAD_URL, true);
+    xhr.open('POST', url_with_name, true);
     xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-    xhr.setRequestHeader('X-Filename', filename);
 
     xhr.onload = () => {
       if (xhr.status === 200) {
