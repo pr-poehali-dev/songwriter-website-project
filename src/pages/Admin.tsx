@@ -33,11 +33,14 @@ export default function Admin() {
     try {
       const filename = `${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`;
 
-      // Шаг 1: получаем presigned URL от бэкенда
+      // Отправляем файл как бинарник напрямую
       const res = await fetch(UPLOAD_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename }),
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'X-Filename': filename,
+        },
+        body: file,
       });
 
       if (!res.ok) {
@@ -45,23 +48,12 @@ export default function Admin() {
         throw new Error(err.error || `HTTP ${res.status}`);
       }
 
-      const { upload_url, cdn_url } = await res.json();
+      const { url } = await res.json();
 
-      // Шаг 2: загружаем файл напрямую в S3 через presigned URL
-      const uploadRes = await fetch(upload_url, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'audio/mpeg' },
-        body: file,
-      });
-
-      if (!uploadRes.ok) {
-        throw new Error(`Ошибка загрузки в хранилище: ${uploadRes.status}`);
-      }
-
-      setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url: cdn_url } }));
+      setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url } }));
       setResults(prev => {
         const filtered = prev.filter(r => r.trackName !== trackName);
-        return [...filtered, { trackName, url: cdn_url }];
+        return [...filtered, { trackName, url }];
       });
 
     } catch (e: unknown) {

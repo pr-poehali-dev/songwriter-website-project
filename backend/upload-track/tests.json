@@ -7,19 +7,10 @@
       "expectedStatus": 200
     },
     {
-      "name": "Start multipart upload",
+      "name": "Missing X-Filename returns 400",
       "method": "POST",
       "path": "/",
-      "body": {"action": "start", "filename": "test.mp3"},
-      "expectedStatus": 200,
-      "expectedBody": {"upload_id": "string", "key": "string"},
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "Unknown action returns 400",
-      "method": "POST",
-      "path": "/",
-      "body": {"action": "unknown"},
+      "body": {},
       "expectedStatus": 400
     }
   ]
