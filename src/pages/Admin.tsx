@@ -38,6 +38,7 @@ export default function Admin() {
     xhr.open('POST', UPLOAD_URL, true);
 
     xhr.onload = () => {
+      console.log('XHR status:', xhr.status, 'response:', xhr.responseText.slice(0, 200));
       if (xhr.status === 200) {
         const { url } = JSON.parse(xhr.responseText);
         setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url } }));
@@ -46,13 +47,17 @@ export default function Admin() {
           return [...filtered, { trackName, url }];
         });
       } else {
-        const msg = (() => { try { return JSON.parse(xhr.responseText).error; } catch { return `HTTP ${xhr.status}`; } })();
+        const msg = (() => { try { return JSON.parse(xhr.responseText).error || `HTTP ${xhr.status}: ${xhr.responseText.slice(0,100)}`; } catch { return `HTTP ${xhr.status}: ${xhr.responseText.slice(0,100)}`; } })();
         setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: msg } }));
       }
     };
 
     xhr.onerror = () => {
-      setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: 'Ошибка сети' } }));
+      setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: 'Ошибка сети (onerror)' } }));
+    };
+
+    xhr.ontimeout = () => {
+      setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: 'Таймаут' } }));
     };
 
     xhr.send(formData);
