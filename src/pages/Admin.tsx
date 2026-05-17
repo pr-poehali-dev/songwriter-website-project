@@ -27,39 +27,34 @@ export default function Admin() {
   const [results, setResults] = useState<UploadResult[]>([]);
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
-  const handleFile = async (trackName: string, file: File) => {
+  const handleFile = (trackName: string, file: File) => {
     setUploads(prev => ({ ...prev, [trackName]: { status: 'uploading' } }));
 
-    try {
-      const filename = `${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`;
+    const filename = `${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`;
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', UPLOAD_URL, true);
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    xhr.setRequestHeader('X-Filename', filename);
 
-      // Отправляем файл как бинарник напрямую
-      const res = await fetch(UPLOAD_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/octet-stream',
-          'X-Filename': filename,
-        },
-        body: file,
-      });
-
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const { url } = JSON.parse(xhr.responseText);
+        setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url } }));
+        setResults(prev => {
+          const filtered = prev.filter(r => r.trackName !== trackName);
+          return [...filtered, { trackName, url }];
+        });
+      } else {
+        const msg = (() => { try { return JSON.parse(xhr.responseText).error; } catch { return `HTTP ${xhr.status}`; } })();
+        setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: msg } }));
       }
+    };
 
-      const { url } = await res.json();
+    xhr.onerror = () => {
+      setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: 'Ошибка сети' } }));
+    };
 
-      setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url } }));
-      setResults(prev => {
-        const filtered = prev.filter(r => r.trackName !== trackName);
-        return [...filtered, { trackName, url }];
-      });
-
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Неизвестная ошибка';
-      setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: msg } }));
-    }
+    xhr.send(file);
   };
 
   return (
