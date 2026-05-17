@@ -4,7 +4,7 @@ import Icon from '@/components/ui/icon';
 const CONTACT_URL = 'https://functions.poehali.dev/6afbe884-da81-4f1e-9505-95f538adf5e4';
 const PROXY_URL = 'https://functions.poehali.dev/11a0f7e9-955d-449a-a519-8be2af5a36d5';
 
-const gdrive = (id: string) => `${PROXY_URL}?id=${id}`;
+const yadisk = (key: string) => `${PROXY_URL}?key=${encodeURIComponent(key)}`;
 
 const ARTIST_PHOTO = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/bucket/4ab1de12-b7f3-4515-afeb-e4f3678ed294.jpg';
 const ALBUM_COVER = 'https://cdn.poehali.dev/projects/b3189a23-8ae0-4c0f-8889-197d53d00978/bucket/9051ec99-fbb5-4bb0-b52b-92d2ca708b27.jpg';
@@ -16,7 +16,7 @@ const ALBUMS = [
     year: '2026',
     cover: ALBUM_COVER,
     tracks: [
-      { num: 1, title: 'Падший ангел', duration: '—', url: gdrive('1YPogNOTvQDJv7yY_lNeIfptcZfZRS6Yk') },
+      { num: 1, title: 'Падший ангел', duration: '—', url: yadisk('https://disk.yandex.ru/d/fBWkkCoOofseuQ') },
       { num: 2, title: 'Сердце демона', duration: '—', url: undefined as string | undefined },
       { num: 3, title: "Demon's heart", duration: '—', url: undefined as string | undefined },
       { num: 4, title: 'Ласточка', duration: '—', url: undefined as string | undefined },
