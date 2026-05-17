@@ -23,38 +23,50 @@ interface UploadResult {
 }
 
 export default function Admin() {
-  const [uploads, setUploads] = useState<Record<string, { status: 'idle' | 'uploading' | 'done' | 'error'; url?: string }>>({});
+  const [uploads, setUploads] = useState<Record<string, { status: 'idle' | 'uploading' | 'done' | 'error'; url?: string; error?: string }>>({});
   const [results, setResults] = useState<UploadResult[]>([]);
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const handleFile = async (trackName: string, file: File) => {
     setUploads(prev => ({ ...prev, [trackName]: { status: 'uploading' } }));
 
-    const arrayBuffer = await file.arrayBuffer();
-    const uint8 = new Uint8Array(arrayBuffer);
-    let binary = '';
-    const chunkSize = 8192;
-    for (let i = 0; i < uint8.length; i += chunkSize) {
-      binary += String.fromCharCode(...uint8.subarray(i, i + chunkSize));
-    }
-    const base64 = btoa(binary);
-    const filename = `${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`;
+    try {
+      const filename = `${trackName.replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g, '_')}.mp3`;
 
-    const res = await fetch(UPLOAD_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename, data: base64 }),
-    });
+      // Шаг 1: получаем presigned URL от бэкенда
+      const res = await fetch(UPLOAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename }),
+      });
 
-    if (res.ok) {
-      const { url } = await res.json();
-      setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url } }));
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+
+      const { upload_url, cdn_url } = await res.json();
+
+      // Шаг 2: загружаем файл напрямую в S3 через presigned URL
+      const uploadRes = await fetch(upload_url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'audio/mpeg' },
+        body: file,
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error(`Ошибка загрузки в хранилище: ${uploadRes.status}`);
+      }
+
+      setUploads(prev => ({ ...prev, [trackName]: { status: 'done', url: cdn_url } }));
       setResults(prev => {
         const filtered = prev.filter(r => r.trackName !== trackName);
-        return [...filtered, { trackName, url }];
+        return [...filtered, { trackName, url: cdn_url }];
       });
-    } else {
-      setUploads(prev => ({ ...prev, [trackName]: { status: 'error' } }));
+
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Неизвестная ошибка';
+      setUploads(prev => ({ ...prev, [trackName]: { status: 'error', error: msg } }));
     }
   };
 
@@ -82,8 +94,8 @@ export default function Admin() {
                 </span>
               )}
               {state?.status === 'error' && (
-                <span className="text-red-500 text-xs flex items-center gap-1">
-                  <Icon name="AlertCircle" size={14} /> Ошибка
+                <span className="text-red-500 text-xs flex items-center gap-1 max-w-[200px] truncate" title={state.error}>
+                  <Icon name="AlertCircle" size={14} /> {state.error}
                 </span>
               )}
 
@@ -95,12 +107,13 @@ export default function Admin() {
                 onChange={e => {
                   const file = e.target.files?.[0];
                   if (file) handleFile(name, file);
+                  e.target.value = '';
                 }}
               />
               <button
                 onClick={() => inputRefs.current[name]?.click()}
                 disabled={state?.status === 'uploading'}
-                className="text-xs px-3 py-1.5 border border-gold/40 text-gold rounded hover:bg-gold/10 transition-colors disabled:opacity-40"
+                className="shrink-0 text-xs px-3 py-1.5 border border-gold/40 text-gold rounded hover:bg-gold/10 transition-colors disabled:opacity-40"
               >
                 {state?.status === 'done' ? 'Заменить' : 'Выбрать файл'}
               </button>
@@ -111,11 +124,11 @@ export default function Admin() {
 
       {results.length > 0 && (
         <div className="mt-10 max-w-2xl">
-          <h2 className="text-sm tracking-widest uppercase text-[#888] mb-4">Готовые URL для кода</h2>
+          <h2 className="text-sm tracking-widest uppercase text-[#888] mb-4">Готовые URL ({results.length} из {TRACK_NAMES.length})</h2>
           <div className="bg-[#111] rounded-lg p-4 text-xs font-mono text-[#aaa] overflow-x-auto whitespace-pre">
             {results.map(r => `"${r.trackName}": "${r.url}"`).join('\n')}
           </div>
-          <p className="text-xs text-[#555] mt-2">Скажите «обнови треки в плеере» — и я всё сделаю автоматически</p>
+          <p className="text-xs text-[#555] mt-2">Напишите «обнови треки в плеере» — и я всё сделаю автоматически</p>
         </div>
       )}
     </div>
