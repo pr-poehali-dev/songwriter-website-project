@@ -19,7 +19,7 @@ const ALBUMS = [
       { num: 1, title: 'Падший ангел', duration: '6:01', url: 'https://archive.org/download/20260517_20260517_1154/%D0%9F%D0%B0%D0%B4%D1%88%D0%B8%D0%B9%20%D0%B0%D0%BD%D0%B3%D0%B5%D0%BB.mp3' },
       { num: 2, title: 'Сердце демона', duration: '5:07', url: 'https://archive.org/download/20260517_20260517_1204/%D0%A1%D0%B5%D1%80%D0%B4%D1%86%D0%B5%20%D0%B4%D0%B5%D0%BC%D0%BE%D0%BD%D0%B0.mp3' },
       { num: 3, title: "Demon's heart", duration: '5:02', url: "https://archive.org/download/demons-heart/Demon's%20heart.mp3" },
-      { num: 4, title: 'Ласточка', duration: '5:18', url: 'https://archive.org/download/20260517_20260517_1210/%D0%9B%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B0.mp3' },
+      { num: 4, title: 'Ласточка', duration: '5:18', url: 'https://archive.org/download/20260620_20260620_1943/%D0%9B%D0%B0%D1%81%D1%82%D0%BE%D1%87%D0%BA%D0%B0.mp3' },
       { num: 5, title: 'Странник', duration: '6:30', url: 'https://archive.org/download/20260517_20260517_1212/%D0%A1%D1%82%D1%80%D0%B0%D0%BD%D0%BD%D0%B8%D0%BA.mp3' },
       { num: 6, title: 'Двое', duration: '4:58', url: 'https://archive.org/download/20260517_20260517_1214/%D0%94%D0%B2%D0%BE%D0%B5.mp3' },
       { num: 7, title: 'Колдун', duration: '6:13', url: 'https://archive.org/download/20260620_20260620_1940/%D0%9A%D0%BE%D0%BB%D0%B4%D1%83%D0%BD.mp3' },
